@@ -1,6 +1,5 @@
 import requests
 import time
-# https://api.symbl.ai/v1/conversations/5529586802229248/messages
 app_id = "664744707446626a374d793866674a3671687651537775434e3030726f505072"
 app_secret = "644b62474a734d336d4c756561654148704f3737506c63446d43374676313437764b666235584b434c5341794173764c3359434762305238436f535345477579"
 auth_response = requests.post( 'https://api.symbl.ai/oauth2/token:generate', json={'type': 'application', 'appId': app_id, 'appSecret': app_secret} )
