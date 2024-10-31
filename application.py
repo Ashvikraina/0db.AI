@@ -2,14 +2,20 @@ from flask import Flask, render_template, request, redirect, url_for
 import requests
 import os
 import time
+from dotenv import load_dotenv
+
+app_path = os.path.join(os.path.dirname(__file__), '.')
+dotenv_path = os.path.join(app_path, '.env')
+load_dotenv(dotenv_path)
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config["SYMBL_API_URL"]=os.environ.get("SYMBL_API_URL")
 
 # Symbl.ai API credentials
-app_id = "664744707446626a374d793866674a3671687651537775434e3030726f505072"
-app_secret = "644b62474a734d336d4c756561654148704f3737506c63446d43374676313437764b666235584b434c5341794173764c3359434762305238436f535345477579"
+app_id = os.environ.get("APP_ID")
+app_secret = os.environ.get("APP_SECRET")
 
 # Generate Access Token
 def get_access_token():
@@ -26,7 +32,7 @@ def process_audio(audio_file_path):
 
     headers = {'Authorization': f'Bearer {access_token}', 'Content-Type': 'audio/mp3'}
     with open(audio_file_path, 'rb') as audio_file:
-        response = requests.post('https://api.symbl.ai/v1/process/audio', headers=headers, data=audio_file)
+        response = requests.post(app.config["SYMBL_API_URL"], headers=headers, data=audio_file)
     
     if response.status_code == 201:
         info = response.json()
@@ -77,4 +83,4 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=bool(os.environ.get("DEBUG",False)))
