@@ -53,8 +53,8 @@ def get_conversation_messages(conversation_id):
     else:
         return f"Error fetching messages: {response.text}"
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
+@app.route('/audioanalyzer', methods=['GET', 'POST'])
+def analyzer():
     if request.method == 'POST':
         # Check if the post request has the file part
         if 'audio_file' not in request.files:
@@ -75,12 +75,30 @@ def index():
                 time.sleep(4)  # Wait for Symbl.ai to process the audio
                 
                 # Fetch conversation messages
-                messages = get_conversation_messages(conversation_id)
-                return messages
+                response = get_conversation_messages(conversation_id)
+                if "messages" in response:
+                    data=[]
+                    messages = response['messages']
+                    for sentence in messages:
+                        record={}
+                        record["text"]=sentence['text']
+                        record["tone"]=sentence['sentiment']['suggested']
+                        data.append(record)
+                return render_template("result.html",data=data)
             else:
                 return "Error processing audio"
     
+    return render_template('analyzer.html')
+
+@app.route('/')
+def index():
     return render_template('index.html')
 
+@app.route('/test')
+def test():
+    name="ashvik"
+    fruits=["apple","banana","grape"]
+    data=[{'text':'tewirhuo','tone':'wefouij'},{'text':'tewirh123uo','tone':'wefou142124ij'}]
+    return render_template('test.html',name=name,fruits=fruits,data=data)
 if __name__ == '__main__':
     app.run(debug=bool(os.environ.get("DEBUG",False)))

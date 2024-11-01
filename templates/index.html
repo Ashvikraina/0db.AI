@@ -3,57 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Sentiment Analysis</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>0db.ai - AI Mental Health Platform</title>
     <style>
+        /* Body Styling */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
+            margin: 0;
+            background-color: #e0e6f1;
+            font-family: Arial, sans-serif;
             color: #333;
         }
+        /* Header Styling */
+        .header {
+            font-size: 1.8em;
+            color: #002855;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        /* Container Styling */
         .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
+            background-color: #002855;
+            color: #f4f4f4;
+            width: 85vw; /* Slightly smaller width */
+            height: 75vh; /* Slightly smaller height */
+            padding: 5vh; /* Responsive padding */
+            border-radius: 8px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
             text-align: center;
+            animation: grow 1.5s ease-out forwards;
+            transform: scale(0.5); /* Initial scale for animation */
+            transition: transform 0.3s ease; /* Smooth transition for hover */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
+        /* Title Styling */
         h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: #007bff;
+            font-size: 3vw; /* Responsive font size based on viewport width */
+            margin-bottom: 2vh; /* Responsive margin */
+            color: #ffffff;
         }
-        input[type="file"] {
-            margin: 20px 0;
+        /* Text Styling */
+        p {
+            line-height: 1.6;
+            font-size: 1.5vw; /* Responsive font size */
+            color: #b0c4de;
         }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
+        /* Animation */
+        @keyframes grow {
+            0% { transform: scale(0.5); }
+            100% { transform: scale(1); }
         }
-        button:hover {
-            background-color: #0056b3;
+        /* Hover Effect */
+        .container:hover {
+            transform: scale(1.02); /* Slightly larger on hover */
         }
+        /* Footer Styling */
         footer {
             margin-top: 20px;
-            font-size: 12px;
-            color: #777;
+            font-size: 1.2vw; /* Responsive font size */
+            color: #87a2bd;
         }
         footer a {
-            color: #005bff;
+            color: #87a2bd;
             text-decoration: none;
         }
         footer a:hover {
@@ -62,20 +77,19 @@
     </style>
 </head>
 <body>
-
+    <div class="header">0db.ai</div>
     <div class="container">
-        <h1><i class="fas fa-microphone-alt"></i> Audio Sentiment Analysis</h1>
-        <p>Select an audio file and we will analyze the sentiment!</p>
-        
-        <form action="/" method="POST" enctype="multipart/form-data">
-            <input type="file" name="audio_file" accept="audio/*" required>
-            <button type="submit"><i class="fas fa-upload"></i> Upload & Analyze</button>
-        </form>
-
+        <h1>AI Mental Health Platform</h1>
+        <p>
+            Zero Decibel (0 dB) is the quietest sound that a normal human ear can detect under ideal conditions.
+            It symbolizes tranquility, the power of subtlety, and the importance of addressing unspoken needs.
+        </p>
+        <p>
+            We are currently in stealth mode, with plans to launch in 2025.
+        </p>
         <footer>
-            <p>Powered by <a href="https://symbl.ai/" target="_blank">Symbl.ai</a></p>
+            For investment or partnership inquiries, email <a href="mailto:ashvik@0db.ai">ashvik@0db.ai</a>
         </footer>
     </div>
-
 </body>
 </html>
