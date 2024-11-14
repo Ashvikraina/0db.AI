@@ -11,7 +11,7 @@ load_dotenv(dotenv_path)
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config["SYMBL_API_URL"]=os.environ.get("SYMBL_API_URL")
+app.config["SYMBL_API_URL"] = os.environ.get("SYMBL_API_URL")
 
 # Symbl.ai API credentials
 app_id = os.environ.get("APP_ID")
@@ -19,7 +19,7 @@ app_secret = os.environ.get("APP_SECRET")
 
 # Generate Access Token
 def get_access_token():
-    auth_response = requests.post('https://api.symbl.ai/oauth2/token:generate', 
+    auth_response = requests.post('https://api.symbl.ai/oauth2/token:generate',
                                   json={'type': 'application', 'appId': app_id, 'appSecret': app_secret})
     access_token = auth_response.json().get('accessToken', None)
     return access_token
@@ -67,26 +67,33 @@ def analyzer():
             # Save the uploaded file to the server
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
-            
+
             # Process the audio
             info = process_audio(filepath)
-            if 'conversationId' in info:
-                conversation_id = info['conversationId']
-                time.sleep(4)  # Wait for Symbl.ai to process the audio
-                
-                # Fetch conversation messages
+            if 'conversationId' not in info:
+                return "Error processing audio"
+
+            conversation_id = info['conversationId']
+
+            # Retry mechanism
+            retry_limit = 4
+            for attempt in range(retry_limit):
+                time.sleep(5)  # Wait for Symbl.ai to process the audio
                 response = get_conversation_messages(conversation_id)
-                if "messages" in response:
-                    data=[]
+
+                if "messages" in response and response['messages']:
+                    data = []
                     messages = response['messages']
                     for sentence in messages:
-                        record={}
-                        record["text"]=sentence['text']
-                        record["tone"]=sentence['sentiment']['suggested']
+                        record = {}
+                        record["text"] = sentence['text']
+                        record["tone"] = sentence['sentiment']['suggested']
                         data.append(record)
-                return render_template("result.html",data=data)
-            else:
-                return "Error processing audio"
+                    return render_template("result.html", data=data)
+                else:
+                    print(f"Retry attempt {attempt + 1} failed. Retrying...")
+
+            return "Unable to process audio after multiple attempts."
     
     return render_template('analyzer.html')
 
@@ -94,11 +101,37 @@ def analyzer():
 def index():
     return render_template('index.html')
 
-@app.route('/test')
-def test():
-    name="ashvik"
-    fruits=["apple","banana","grape"]
-    data=[{'text':'tewirhuo','tone':'wefouij'},{'text':'tewirh123uo','tone':'wefou142124ij'}]
-    return render_template('test.html',name=name,fruits=fruits,data=data)
+@app.route('/analysis1', methods=['POST'])
+def analysis1():
+    if 'audio_file' not in request.files:
+        return "No file part"
+    file = request.files['audio_file']
+    if file.filename == '':
+        return "No selected file"
+    
+    if file:
+        # Save the uploaded file to the server
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(filepath)
+        
+        # Process the audio
+        info = process_audio(filepath)
+        return {'info': info, 'success': True, 'message': 'Your file is being processed'}
+
+@app.route('/analysis2', methods=['POST'])
+def analysis2():
+    response = get_conversation_messages(request.form['conversationId'])
+    if "messages" in response and response['messages']:
+        data = []
+        messages = response['messages']
+        for sentence in messages:
+            record = {}
+            record["text"] = sentence['text']
+            record["tone"] = sentence['sentiment']['suggested']
+            data.append(record)
+        return {'success': True, 'data': data}
+    else:
+        return {'success': False, 'message': 'No messages found'}
+
 if __name__ == '__main__':
-    app.run(debug=bool(os.environ.get("DEBUG",False)))
+    app.run(debug=bool(os.environ.get("DEBUG", False)))
